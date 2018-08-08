@@ -113,8 +113,12 @@ public class PlayScreen implements Screen
             Goomba nextGoomba = goombaIterator.next();
             if (nextGoomba.getDestroyed())
             {
-                goombaIterator.remove();
-                world.destroyBody(nextGoomba.b2Body);
+                if (nextGoomba.getStateTime() >= 1 && nextGoomba.getDestroyed())
+                {
+                    Gdx.app.log("removing goomba from array", "");
+                    goombaIterator.remove();
+                    world.destroyBody(nextGoomba.b2Body);
+                }
             }
         }
 
