@@ -103,32 +103,36 @@ public class PlayScreen implements Screen
 
     public void update(float dt)
     {
-        handleInput(dt);
-        handleSpawningItems();
-
         world.step(Constants.PHYSICS_TIME_STEP, 6, 2);
 
-        player.update(dt);
+
+
         goombaIterator = creator.getGoombaIterator();
         while(goombaIterator.hasNext())
         {
             Goomba nextGoomba = goombaIterator.next();
+            if (nextGoomba.getDestroyed())
+            {
+                if (nextGoomba.getStateTime() >= 1 && nextGoomba.getDestroyed())
+                {
+                    Gdx.app.log("removing goomba from array", "");
+                    goombaIterator.remove();
+                    world.destroyBody(nextGoomba.b2Body);
+                }
+            }
+        }
+
+        handleInput(dt);
+        handleSpawningItems();
+
+        goombaIterator = creator.getGoombaIterator();
+        while(goombaIterator.hasNext()) {
+            Goomba nextGoomba = goombaIterator.next();
             nextGoomba.update(dt);
             if(nextGoomba.getX()<player.getX()+(Constants.ENEMY_WAKE_DISTANCE/Constants.PPM))
                 nextGoomba.b2Body.setActive((true));
-            if (nextGoomba.getToDestroy() && !nextGoomba.getDestroyed())
-            {
-                world.destroyBody(nextGoomba.b2Body);
-                nextGoomba.setDestroyed(true);
-            }
-
-            if (nextGoomba.getStateTime() >= 1 && nextGoomba.getDestroyed())
-            {
-                Gdx.app.log("removing goomba from array", "");
-                goombaIterator.remove();
-            }
-
         }
+
 
         for (Item item : items)
             item.update(dt);
@@ -139,6 +143,9 @@ public class PlayScreen implements Screen
 
         gameCam.update();
         renderer.setView(gameCam);
+
+
+        player.update(dt);
     }
 
     public void handleInput(float dt)

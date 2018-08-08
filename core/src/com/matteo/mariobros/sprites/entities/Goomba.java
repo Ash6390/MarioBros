@@ -85,6 +85,7 @@ public class Goomba extends Enemy
         stateTime += dt;
         if (setToDestroy && !destroyed)
         {
+            destroyed = true;
             setRegion(new TextureRegion(screen.getAtlas().findRegion(FilePaths.GOOMBA_TEXTURE_FILE_REGION), 32, 0, 16, 16));
             setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2 + (1/Constants.PPM));
             stateTime = 0;
